@@ -99,6 +99,7 @@ def main():
         raise RuntimeError('Required GitHub Actions repository secret HF_TOKEN is missing')
     from huggingface_hub import HfApi, CommitOperationAdd, hf_hub_download
     api = HfApi(token=token)
+    api.auth_check(REPO, repo_type='dataset', write=True)
     info = api.repo_info(REPO, repo_type='dataset', revision='main')
     if info.private:
         raise ValueError('Expected an existing public dataset')
