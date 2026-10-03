@@ -4,6 +4,8 @@ import argparse
 import datetime as dt
 import json
 import math
+import os
+import tempfile
 import pathlib
 import re
 import urllib.request
@@ -78,7 +80,14 @@ def capture(root):
     day = now.date().isoformat()
     destination = root / 'data' / day
     if destination.exists():
-        print(f'{day}: existing capture retained; no overwrite')
+        expected = {f'{name}.json' for name in ENDPOINTS}
+        if {f.name for f in destination.iterdir()} != expected:
+            raise ValueError('Existing date is incomplete; do not overwrite or commit it')
+        for filename in expected:
+            existing = json.loads((destination / filename).read_text())
+            if existing.get('capture_date_utc') != day:
+                raise ValueError('Existing capture has invalid date')
+        print(f'{day}: existing complete capture retained; no overwrite')
         return
     payloads = {}
     for name, url in ENDPOINTS.items():
@@ -98,9 +107,14 @@ def capture(root):
                           'captured_at_utc': dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z'),
                           'source_url': url, 'data': projected}
     # Fail the entire capture before writing if any dataset is unavailable or invalid.
-    destination.mkdir(parents=True)
-    for name, payload in payloads.items():
-        (destination / f'{name}.json').write_text(json.dumps(payload, indent=2, ensure_ascii=False, allow_nan=False) + '\n')
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    # Build outside data/: a failed write cannot leave a committable partial date.
+    with tempfile.TemporaryDirectory(prefix='dpmi-capture-', dir=root) as temporary:
+        stage = pathlib.Path(temporary) / day
+        stage.mkdir()
+        for name, payload in payloads.items():
+            (stage / f'{name}.json').write_text(json.dumps(payload, indent=2, ensure_ascii=False, allow_nan=False) + '\n')
+        os.rename(stage, destination)
     print(f'{day}: wrote {len(payloads)} derived-only datasets')
 
 if __name__ == '__main__':
