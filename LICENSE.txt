@@ -1,0 +1,3 @@
+Copyright Dudelytics / Axel Lämmle.
+All rights reserved, subject to the limited quotation and attribution permissions published at https://dudelytics.com/lizenzen/.
+No unrestricted redistribution, mirroring, resale, sublicensing or white-label license is granted by this repository. No CoinGecko raw data or license to such data is included.
