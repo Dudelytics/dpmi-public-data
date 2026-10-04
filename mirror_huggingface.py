@@ -71,6 +71,18 @@ def collect():
         raise ValueError('Archive contains no complete captures or a partial capture')
     return payloads
 
+def committed_card():
+    path = 'HUGGINGFACE_DATASET_CARD.md'
+    if path not in git('ls-tree', '-r', '--name-only', 'HEAD', '--', path).decode().splitlines():
+        return None
+    body = git('show', 'HEAD:' + path)
+    if len(body) > 30_000:
+        raise ValueError('Dataset card exceeds size limit')
+    text = body.decode('utf-8')
+    if not text.startswith('---\n') or '\nlicense: other\n' not in text or '\nlicense_link: https://dudelytics.com/lizenzen/\n' not in text:
+        raise ValueError('Dataset card must retain the approved license')
+    return body
+
 def plan(payloads, remote_paths, read_remote):
     # A partial previous upload is repaired, but differing history is never overwritten.
     additions = []
@@ -90,6 +102,7 @@ def main():
     parser.add_argument('--check-only', action='store_true')
     args = parser.parse_args()
     payloads = collect()
+    card = committed_card()
     revision = git('rev-parse', 'HEAD').decode().strip()
     if args.check_only:
         print(f'Validated {len(payloads)} committed public files at {revision}')
@@ -108,6 +121,14 @@ def main():
     def read_remote(path, rev=remote_revision):
         return Path(hf_hub_download(REPO, path, repo_type='dataset', revision=rev, token=token)).read_bytes()
     additions = plan(payloads, remote_paths, read_remote)
+    # Metadata is canonical GitHub content; dated snapshot bytes remain immutable.
+    if card is not None:
+        from huggingface_hub import DatasetCard
+        metadata = DatasetCard(card.decode('utf-8')).data
+        if metadata.get('license') != 'other' or {c['config_name'] for c in metadata.get('configs', [])} != set(ENDPOINTS):
+            raise ValueError('Unexpected dataset card license or configurations')
+        if 'README.md' not in remote_paths or read_remote('README.md') != card:
+            additions.append(('README.md', card))
     if additions:
         commit = api.create_commit(REPO, repo_type='dataset', revision='main',
             parent_commit=remote_revision,
