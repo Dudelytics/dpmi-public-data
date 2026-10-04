@@ -54,7 +54,19 @@ def validate(path, body):
             raise ValueError('Unexpected benchmark')
     else:
         source['timestamp'] = data['source_timestamp']
+    legacy_dvix = name == 'dvix' and 'status' not in data and 'freshness' not in data
+    if name == 'dvix' and not legacy_dvix:
+        health = data.get('freshness')
+        if not isinstance(health, dict) or set(health) != {'fresh', 'reason'} or 'status' not in data:
+            raise ValueError('Invalid archived DVIX diagnosis')
+        if health['fresh'] is None and health['reason'] is None:
+            source.pop('freshness')
+        else:
+            source['freshness'] = dict(health, status=data['status'], source_timestamp=data['source_timestamp'])
     projected = project(name, source)
+    if legacy_dvix:
+        projected.pop('status')
+        projected.pop('freshness')
     if json.dumps(data, sort_keys=True, allow_nan=False) != json.dumps(projected, sort_keys=True, allow_nan=False):
         raise ValueError('Unexpected fields or values in public projection')
     return day, name

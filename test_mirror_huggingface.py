@@ -51,5 +51,24 @@ class MirrorTests(unittest.TestCase):
         with patch.object(module, 'git', incomplete), self.assertRaises(ValueError):
             collect()
 
+    def test_old_and_extended_dvix_diagnosis(self):
+        path = 'data/2026-10-03/dvix.json'
+        row = json.loads(self.payloads[path])
+        validate(path, json.dumps(row).encode())
+        for status, fresh, reason in [('live', True, None), ('recovery_window', False, 'observed_hourly_anchor_missing'), ('stale', False, 'source_timestamp_stale'), ('live', None, None)]:
+            new = copy.deepcopy(row)
+            new['data'].update(status=status, freshness={'fresh': fresh, 'reason': reason})
+            validate(path, json.dumps(new).encode())
+            new['data']['freshness']['api_key'] = 'forbidden'
+            with self.assertRaises(ValueError):
+                validate(path, json.dumps(new).encode())
+
+    def test_contradictory_dvix_diagnosis_rejected(self):
+        path = 'data/2026-10-03/dvix.json'
+        row = json.loads(self.payloads[path])
+        row['data'].update(status='stale', freshness={'fresh': True, 'reason': None})
+        with self.assertRaises(ValueError):
+            validate(path, json.dumps(row).encode())
+
 if __name__ == '__main__':
     unittest.main()

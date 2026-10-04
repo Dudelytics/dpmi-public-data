@@ -22,6 +22,12 @@ This is a minimal projection of existing public JSON endpoints, not an exact cop
 
 `index_id` (`DPMI-FG` or `DVIX`), `score` (finite number from 0 through 100), `source_timestamp`, and `methodology_version`. Components, raw or aggregated volumes, auxiliary values and retrospective score histories are not copied. The score is a derived indicator within Dudelytics' scope, not a whole-market observation or investment recommendation.
 
+### DVIX public freshness diagnosis (prospective extension)
+
+New DVIX captures additionally retain `data.status` (nullable string: `live`, `stale`, `recovery_window`, or `unavailable`) and `data.freshness` with `fresh` (nullable boolean) and `reason` (nullable string: `observed_hourly_anchor_missing`, `source_timestamp_stale`, or `current_unavailable`). These are the public endpoint's diagnosis at retrieval time, not a recalculation from archive time. Missing source diagnosis is represented by null, never by an inferred fresh status. All other source health fields and unknown fields remain excluded.
+
+This is an additive extension of v1. Earlier dated files are not rewritten; their absent diagnosis means not captured, not fresh. Hugging Face must use an explicit DVIX feature schema to read old and extended files together without changing any archived bytes.
+
 ## DPMI leg of the daily benchmark
 
 `index_id` (`DPMI`), `value` (index level), `target_timestamp` (today's 00:00 UTC cutoff), `source_timestamp` (actual DPMI observation selected by the existing benchmark), `observed_at_utc` (benchmark source's capture time), `methodology_version`, and `benchmark_methodology_version`. Only source rows explicitly marked `observed` are accepted. Source timestamp can precede the cutoff under the existing methodology. BTC, ETH, total-market values and normalization are excluded. No claim is made about completeness of the excluded benchmark legs.

@@ -35,6 +35,26 @@ def version(value):
         raise ValueError('Invalid methodology version')
     return value
 
+def dvix_diagnosis(source):
+    """Only public health labels; never copy the complete health or source object."""
+    status = source.get('status')
+    if status not in (None, 'live', 'stale', 'recovery_window', 'unavailable'):
+        raise ValueError('Invalid DVIX public status')
+    health = source.get('freshness')
+    fresh = reason = None
+    if health is not None:
+        if not isinstance(health, dict) or type(health.get('fresh')) is not bool:
+            raise ValueError('Invalid DVIX freshness diagnosis')
+        fresh = health['fresh']
+        reason = health.get('reason')
+        if reason not in (None, 'observed_hourly_anchor_missing', 'source_timestamp_stale', 'current_unavailable'):
+            raise ValueError('Invalid DVIX public freshness reason')
+        if health.get('status') != status or fresh != (status == 'live'):
+            raise ValueError('Inconsistent DVIX freshness status')
+        if stamp(health.get('source_timestamp')) != stamp(source['timestamp']):
+            raise ValueError('DVIX diagnosis describes a different observation')
+    return {'status': status, 'freshness': {'fresh': fresh, 'reason': reason}}
+
 def project(name, source):
     """No recursion or pass-through: only these named, validated fields leave memory."""
     if name in ('dpmi', 'dpmi-hq'):
@@ -56,9 +76,12 @@ def project(name, source):
         score = number(source['score'])
         if not 0 <= score <= 100:
             raise ValueError('Score outside 0–100')
-        return {'index_id': 'DPMI-FG' if name == 'fear-greed' else 'DVIX', 'score': score,
+        projected = {'index_id': 'DPMI-FG' if name == 'fear-greed' else 'DVIX', 'score': score,
                 'source_timestamp': stamp(source['timestamp']),
                 'methodology_version': version(source['methodology_version'])}
+        if name == 'dvix':
+            projected.update(dvix_diagnosis(source))
+        return projected
     if name == 'benchmark-dpmi':
         row = source['latest']
         own = row['series']['dpmi']
