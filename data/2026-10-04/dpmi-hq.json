@@ -1,0 +1,13 @@
+{
+  "archive_schema": "dudelytics.public-derived.v1",
+  "capture_date_utc": "2026-10-04",
+  "captured_at_utc": "2026-10-04T03:54:57Z",
+  "source_url": "https://dudelytics.com/data/dpmi-holder-quality/current.json",
+  "data": {
+    "index_id": "DPMI-HQ",
+    "value": 141.752371,
+    "source_timestamp": "2026-10-04T03:52:06Z",
+    "methodology_version": "DPMI-HQ-1.0",
+    "live_history_start": "2026-08-17T17:00:00Z"
+  }
+}
