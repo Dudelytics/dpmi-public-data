@@ -1,0 +1,17 @@
+{
+  "archive_schema": "dudelytics.public-derived.v1",
+  "capture_date_utc": "2026-10-05",
+  "captured_at_utc": "2026-10-05T00:50:48Z",
+  "source_url": "https://dudelytics.com/data/dpmi/dvix.php",
+  "data": {
+    "index_id": "DVIX",
+    "score": 6.5445,
+    "source_timestamp": "2026-10-05T00:42:06Z",
+    "methodology_version": "DVIX-0.1",
+    "status": "live",
+    "freshness": {
+      "fresh": true,
+      "reason": null
+    }
+  }
+}
