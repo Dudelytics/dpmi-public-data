@@ -1,0 +1,13 @@
+{
+  "archive_schema": "dudelytics.public-derived.v1",
+  "capture_date_utc": "2026-10-08",
+  "captured_at_utc": "2026-10-08T06:29:23Z",
+  "source_url": "https://dudelytics.com/data/dpmi/current.json",
+  "data": {
+    "index_id": "DPMI",
+    "value": 136.301336,
+    "source_timestamp": "2026-10-08T06:22:06Z",
+    "methodology_version": "DPMI-1.0",
+    "live_history_start": "2026-08-17T16:06:32Z"
+  }
+}
