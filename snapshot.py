@@ -55,7 +55,7 @@ def dvix_diagnosis(source):
             raise ValueError('DVIX diagnosis describes a different observation')
     return {'status': status, 'freshness': {'fresh': fresh, 'reason': reason}}
 
-def project(name, source):
+def project(name, source, target_day=None):
     """No recursion or pass-through: only these named, validated fields leave memory."""
     if name in ('dpmi', 'dpmi-hq'):
         expected = 'DPMI' if name == 'dpmi' else 'DPMI-HQ'
@@ -83,13 +83,34 @@ def project(name, source):
             projected.update(dvix_diagnosis(source))
         return projected
     if name == 'benchmark-dpmi':
-        row = source['latest']
+        # Capture selects our own cutoff, independently of excluded benchmark legs.
+        # The no-date form also validates existing immutable archive projections.
+        if target_day is None:
+            row = source['latest']
+        else:
+            expected_target = stamp(target_day + 'T00:00:00Z')
+            points = source.get('points')
+            if not isinstance(points, list):
+                raise ValueError('Missing benchmark observations')
+            matches = [row for row in points if isinstance(row, dict)
+                       and row.get('target_timestamp') in
+                       (expected_target, expected_target.replace('Z', '+00:00'))]
+            if len(matches) != 1:
+                raise ValueError('Today’s unique observed DPMI cutoff is not available; retry later')
+            row = matches[0]
         own = row['series']['dpmi']
         if row.get('kind') != 'observed' or own.get('status') != 'observed':
             raise ValueError('Benchmark DPMI point is not observed')
         target = stamp(row['target_timestamp'])
         if target[11:] != '00:00:00Z':
             raise ValueError('Unexpected benchmark cutoff')
+        source_time = stamp(own['source_timestamp'])
+        cutoff = dt.datetime.fromisoformat(target.replace('Z', '+00:00'))
+        observed = dt.datetime.fromisoformat(source_time.replace('Z', '+00:00'))
+        if not 0 <= (cutoff - observed).total_seconds() <= 720:
+            raise ValueError('DPMI observation outside the benchmark lookback')
+        if number(own['value']) <= 0:
+            raise ValueError('Invalid DPMI index level')
         return {'index_id': 'DPMI', 'value': number(own['value']),
                 'target_timestamp': target,
                 'source_timestamp': stamp(own['source_timestamp']),
@@ -122,7 +143,7 @@ def capture(root):
             body = response.read(2_000_001)
         if len(body) > 2_000_000:
             raise ValueError('Public response exceeds size limit')
-        projected = project(name, json.loads(body))
+        projected = project(name, json.loads(body), target_day=day)
         if name == 'benchmark-dpmi' and projected['target_timestamp'][:10] != day:
             raise ValueError('Today’s observed DPMI cutoff is not available; retry later')
         payloads[name] = {'archive_schema': 'dudelytics.public-derived.v1',
@@ -144,3 +165,4 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--root', type=pathlib.Path, default=pathlib.Path(__file__).resolve().parent)
     capture(parser.parse_args().root)
+
