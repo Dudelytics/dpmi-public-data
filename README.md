@@ -11,11 +11,11 @@ English data entry point: https://dudelytics.com/en/dpmi/data/
 
 Six daily JSON files contain only existing, publicly published Dudelytics outputs: main DPMI, DPMI-HQ, seven sector index levels, Fear & Greed score, DVIX score and the observed DPMI leg of the daily benchmark. No BTC/ETH prices, market capitalizations, volumes, provider payloads, holdings, eligibility reviews, candidate/shadow data, admin data, configuration or credentials are archived. The benchmark file deliberately contains only the DPMI leg, not a full benchmark dataset. See [SCHEMA.md](SCHEMA.md).
 
-Snapshots are captured after the UTC benchmark cutoff (scheduled at 00:30 UTC, with retries). Main/HQ/sector/score files preserve the source's actual timestamp; they are not represented as midnight observations. A stale source retains its actual timestamp. No missing values are invented, backfilled or interpolated. Historical percentage-change fields are excluded because some include backfill.
+Snapshots are captured after the UTC benchmark cutoff (scheduled at 00:30 UTC, with retries). Main/HQ/sector/score files preserve the source's actual timestamp; they are not represented as midnight observations. A stale source retains its actual timestamp. No missing values are invented, backfilled or interpolated. Historical percentage-change fields are outside this snapshot schema.
 
 ## History and provenance
 
-The archive starts on **2026-10-03**. It does not retrospectively certify earlier publication. The main DPMI's live history begins on **2026-08-17T16:06:32Z**; each index can have a different observation start. Earlier reconstructed/backfilled history is not included. Scores may be derived from observed history, which is different from having been published contemporaneously in the past.
+The archive starts on **2026-10-03**. It does not retrospectively certify earlier publication. The main DPMI's live history begins on **2026-08-17T16:06:32Z**; each index can have a different observation start. This repository contains dated snapshots rather than full index histories. Scores may be derived from observed history, which is different from having been published contemporaneously in the past.
 
 Files under `data/YYYY-MM-DD/` record their capture time and public source URL. Existing capture dates are never overwritten by the job. Scheduled GitHub Actions can run late; the source and capture timestamps make that delay explicit. A failed run does not commit a partial capture. Corrections, if needed, must be published separately with an explanation.
 

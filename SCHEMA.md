@@ -12,7 +12,7 @@ This is a minimal projection of existing public JSON endpoints, not an exact cop
 
 ## DPMI and DPMI-HQ
 
-`index_id` (string), `value` (finite number, index level), `source_timestamp` (UTC timestamp from the public source), `methodology_version` (string), `live_history_start` (UTC timestamp). `live_history_start` is the source's live-series start, not this GitHub archive's start. Percentage changes, reconstructed history and compositions are not included.
+`index_id` (string), `value` (finite number, index level), `source_timestamp` (UTC timestamp from the public source), `methodology_version` (string), `live_history_start` (UTC timestamp). `live_history_start` is the source's live-series start, not this GitHub archive's start. Percentage changes, full index histories and compositions are not included.
 
 ## Sector indices
 

@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate public projection
+        run: python -m unittest test_public_projection.py
       - name: Capture only public derived values
         shell: bash
         run: |

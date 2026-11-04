@@ -99,7 +99,7 @@ def project(name, source, target_day=None):
                 raise ValueError('Today’s unique observed DPMI cutoff is not available; retry later')
             row = matches[0]
         own = row['series']['dpmi']
-        if row.get('kind') != 'observed' or own.get('status') != 'observed':
+        if row.get('kind') not in (None, 'observed') or own.get('status') != 'observed':
             raise ValueError('Benchmark DPMI point is not observed')
         target = stamp(row['target_timestamp'])
         if target[11:] != '00:00:00Z':

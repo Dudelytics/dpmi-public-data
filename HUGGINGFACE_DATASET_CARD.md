@@ -80,7 +80,7 @@ This mirror excludes raw CoinGecko prices, market capitalizations, trading volum
 
 ## Provenance and interpretation
 
-The main DPMI's observed history begins on **17 August 2026, 16:06:32 UTC**. Earlier main-index history, where present in the original public endpoint, is labeled as backfill and is not a contemporaneous observation. Other indices and indicators have their own starts and provenance; do not infer a shared observation start from the main DPMI. The dated public GitHub archive begins on **3 October 2026**. A captured source timestamp may predate the capture, including during a data recovery window. Captures do not certify that older observations were publicly available when they were originally computed.
+The main DPMI's observed history begins on **17 August 2026, 16:06:32 UTC**. Other indices and indicators have their own starts; do not infer a shared observation start from the main DPMI. The dated public GitHub archive begins on **3 October 2026**. A captured source timestamp may predate the capture, including during a data recovery window. Captures do not certify that older observations were publicly available when they were originally computed.
 
 The archive is a collection of observed captures, not a tamper-proof ledger. Repository owners can rewrite Git history. For a reproducible citation, link to the specific dated GitHub file at its commit permalink and cite its `source_timestamp` and `captured_at_utc` separately.
 
