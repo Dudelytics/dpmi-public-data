@@ -76,6 +76,13 @@ class MirrorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Capture date mismatch'):
             validate(path, json.dumps(row).encode())
 
+    def test_late_dvix_cannot_assert_false_freshness(self):
+        path = 'data/2026-11-18/dvix.json'
+        row = json.loads(self.payloads[path])
+        row['data']['freshness']['fresh'] = False
+        with self.assertRaisesRegex(ValueError, 'Late export cannot assert DVIX freshness'):
+            validate(path, json.dumps(row).encode())
+
     def test_contradictory_dvix_diagnosis_rejected(self):
         path = 'data/2026-10-03/dvix.json'
         row = json.loads(self.payloads[path])

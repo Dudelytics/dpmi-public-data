@@ -66,7 +66,9 @@ def validate(path, body):
         if any(stamp(value)[:10] != day for value in source_times):
             raise ValueError('Late export source date mismatch')
         if name == 'dvix' and (
-            data.get('status') is not None or any((data.get('freshness') or {}).values())
+            data.get('status') is not None or any(
+                value is not None for value in (data.get('freshness') or {}).values()
+            )
         ):
             raise ValueError('Late export cannot assert DVIX freshness')
 
