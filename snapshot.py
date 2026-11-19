@@ -38,9 +38,12 @@ def version(value):
 def dvix_diagnosis(source):
     """Only public health labels; never copy the complete health or source object."""
     status = source.get('status')
+    health = source.get('freshness')
+    # DVIX 0.3 uses 'ok' for a usable score without a freshness diagnosis.
+    if status == 'ok' and health is None:
+        status = None
     if status not in (None, 'live', 'stale', 'recovery_window', 'unavailable'):
         raise ValueError('Invalid DVIX public status')
-    health = source.get('freshness')
     fresh = reason = None
     if health is not None:
         if not isinstance(health, dict) or type(health.get('fresh')) is not bool:
