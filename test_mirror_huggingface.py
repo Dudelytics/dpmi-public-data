@@ -63,6 +63,19 @@ class MirrorTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 validate(path, json.dumps(new).encode())
 
+    def test_late_export_requires_evidence_from_target_day(self):
+        path = 'data/2026-11-18/dpmi.json'
+        row = json.loads(self.payloads['data/2026-11-19/dpmi.json'])
+        row['capture_date_utc'] = '2026-11-18'
+        row['data']['source_timestamp'] = '2026-11-18T07:47:13Z'
+        self.assertEqual(validate(path, json.dumps(row).encode()), ('2026-11-18', 'dpmi'))
+        row['data']['source_timestamp'] = '2026-11-19T07:47:13Z'
+        with self.assertRaisesRegex(ValueError, 'Late export source date mismatch'):
+            validate(path, json.dumps(row).encode())
+        row['captured_at_utc'] = '2026-11-17T12:00:00Z'
+        with self.assertRaisesRegex(ValueError, 'Capture date mismatch'):
+            validate(path, json.dumps(row).encode())
+
     def test_contradictory_dvix_diagnosis_rejected(self):
         path = 'data/2026-10-03/dvix.json'
         row = json.loads(self.payloads[path])

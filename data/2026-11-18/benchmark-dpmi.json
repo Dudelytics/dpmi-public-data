@@ -1,0 +1,15 @@
+{
+  "archive_schema": "dudelytics.public-derived.v1",
+  "capture_date_utc": "2026-11-18",
+  "captured_at_utc": "2026-11-19T12:26:57Z",
+  "source_url": "https://dudelytics.com/data/dpmi/benchmark.json",
+  "data": {
+    "index_id": "DPMI",
+    "value": 97.353778,
+    "target_timestamp": "2026-11-18T00:00:00Z",
+    "source_timestamp": "2026-11-17T23:57:13Z",
+    "observed_at_utc": "2026-11-18T00:22:27Z",
+    "methodology_version": "DPMI-1.0",
+    "benchmark_methodology_version": "DPMI-BENCH-1.3"
+  }
+}

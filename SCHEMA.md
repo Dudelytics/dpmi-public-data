@@ -5,9 +5,9 @@ This is a minimal projection of existing public JSON endpoints, not an exact cop
 | Field | Type | Meaning |
 |---|---|---|
 | `archive_schema` | string | `dudelytics.public-derived.v1` |
-| `capture_date_utc` | string | UTC calendar date, `YYYY-MM-DD`; also the directory name |
-| `captured_at_utc` | string | Actual archive retrieval time in UTC; differs from source observation time |
-| `source_url` | string | Fixed public Dudelytics JSON endpoint used for the projection |
+| `capture_date_utc` | string | UTC archive date, `YYYY-MM-DD`; also the directory name |
+| `captured_at_utc` | string | Actual export time in UTC; may be later than the archive date and differs from source observation time |
+| `source_url` | string | Fixed public Dudelytics JSON endpoint for the dataset |
 | `data` | object | Dataset-specific allowlisted values below |
 
 ## DPMI and DPMI-HQ
@@ -34,4 +34,4 @@ This is an additive extension of v1. Earlier dated files are not rewritten; thei
 
 ## Failure and immutability policy
 
-Missing or invalid numbers/timestamps, an unavailable source, or a missing current-day observed benchmark leg fail the capture before any data files are written. Existing date directories are retained without modification. A stale score's source timestamp remains visible; capture time must never be used as its freshness timestamp.
+Missing or invalid numbers/timestamps, an unavailable source, or a missing current-day observed benchmark leg fail the capture before any data files are written. Existing date directories are retained without modification. For an export created after the archive date, all index and score observations must belong to the archive date. The benchmark must have an observed cutoff for that date. Late exports carry no asserted DVIX freshness diagnosis. A stale score's source timestamp remains visible; capture time must never be used as its freshness timestamp.

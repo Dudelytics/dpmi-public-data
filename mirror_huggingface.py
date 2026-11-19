@@ -35,7 +35,8 @@ def validate(path, body):
     row = json.loads(body, object_pairs_hook=unique)
     if set(row) != ENVELOPE or row['archive_schema'] != 'dudelytics.public-derived.v1':
         raise ValueError('Unexpected archive envelope')
-    if row['capture_date_utc'] != day or stamp(row['captured_at_utc'])[:10] != day:
+    captured_at = stamp(row['captured_at_utc'])
+    if row['capture_date_utc'] != day or captured_at[:10] < day:
         raise ValueError('Capture date mismatch')
     if row['source_url'] != ENDPOINTS[name]:
         raise ValueError('Unexpected public source')
@@ -54,6 +55,21 @@ def validate(path, body):
             raise ValueError('Unexpected benchmark')
     else:
         source['timestamp'] = data['source_timestamp']
+    if captured_at[:10] > day:
+        # A delayed export needs positive evidence for the dated archive entry.
+        if name == 'sectors':
+            source_times = [v['source_timestamp'] for v in data['sectors'].values()]
+        elif name == 'benchmark-dpmi':
+            source_times = [data['observed_at_utc']]
+        else:
+            source_times = [data['source_timestamp']]
+        if any(stamp(value)[:10] != day for value in source_times):
+            raise ValueError('Late export source date mismatch')
+        if name == 'dvix' and (
+            data.get('status') is not None or any((data.get('freshness') or {}).values())
+        ):
+            raise ValueError('Late export cannot assert DVIX freshness')
+
     legacy_dvix = name == 'dvix' and 'status' not in data and 'freshness' not in data
     if name == 'dvix' and not legacy_dvix:
         health = data.get('freshness')

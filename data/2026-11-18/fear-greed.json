@@ -1,0 +1,12 @@
+{
+  "archive_schema": "dudelytics.public-derived.v1",
+  "capture_date_utc": "2026-11-18",
+  "captured_at_utc": "2026-11-19T12:26:57Z",
+  "source_url": "https://dudelytics.com/data/dpmi/fear-greed.php",
+  "data": {
+    "index_id": "DPMI-FG",
+    "score": 7.427087,
+    "source_timestamp": "2026-11-18T07:47:13Z",
+    "methodology_version": "DPMI-FG-0.3"
+  }
+}
