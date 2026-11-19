@@ -16,6 +16,23 @@ class PublicProjectionTests(unittest.TestCase):
         self.assertEqual(result['source_timestamp'], source['timestamp'])
         self.assertEqual(set(result), {'index_id','value','source_timestamp','methodology_version','live_history_start'})
 
+    def test_dvix_v03_ok_without_freshness(self):
+        source = dict(
+            score=27.045229,
+            timestamp='2026-11-19T10:52:18Z',
+            methodology_version='DVIX-0.3',
+            status='ok',
+            quality={'not_for_archive': True},
+        )
+        result = project('dvix', source)
+        self.assertEqual(result['score'], source['score'])
+        self.assertIsNone(result['status'])
+        self.assertEqual(result['freshness'], {'fresh': None, 'reason': None})
+        self.assertNotIn('quality', result)
+
+        with self.assertRaisesRegex(ValueError, 'Invalid DVIX public status'):
+            project('dvix', source | {'freshness': {'fresh': True, 'status': 'ok'}})
+
     def test_benchmark_without_internal_kind(self):
         own = dict(value=122.073434, status='observed', source_timestamp='2026-11-04T00:00:00Z', methodology_version='DPMI-1.0')
         row = dict(target_timestamp='2026-11-04T00:00:00Z', observed_at_utc='2026-11-04T00:02:00Z', series={'dpmi':own})
