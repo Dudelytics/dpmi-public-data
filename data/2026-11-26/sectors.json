@@ -1,0 +1,53 @@
+{
+  "archive_schema": "dudelytics.public-derived.v1",
+  "capture_date_utc": "2026-11-26",
+  "captured_at_utc": "2026-11-26T08:44:29Z",
+  "source_url": "https://dudelytics.com/data/dpmi/sector-family.php",
+  "data": {
+    "methodology_version": "DPMI-SF-1.1",
+    "sectors": {
+      "defi": {
+        "index_id": "DPMI-DEFI",
+        "value": 74.989549,
+        "source_timestamp": "2026-11-26T08:42:20Z",
+        "live_history_start": "2026-08-20T19:45:21Z"
+      },
+      "rwa": {
+        "index_id": "DPMI-RWA",
+        "value": 72.880144,
+        "source_timestamp": "2026-11-26T08:42:20Z",
+        "live_history_start": "2026-08-20T19:45:21Z"
+      },
+      "ai": {
+        "index_id": "DPMI-AI",
+        "value": 101.750973,
+        "source_timestamp": "2026-11-26T08:42:20Z",
+        "live_history_start": "2026-08-20T19:45:21Z"
+      },
+      "depin": {
+        "index_id": "DPMI-DEPIN",
+        "value": 100.015832,
+        "source_timestamp": "2026-11-26T08:42:20Z",
+        "live_history_start": "2026-08-20T19:45:21Z"
+      },
+      "interoperability": {
+        "index_id": "DPMI-INTEROP",
+        "value": 89.996189,
+        "source_timestamp": "2026-11-26T08:42:20Z",
+        "live_history_start": "2026-08-20T19:45:21Z"
+      },
+      "privacy_zk": {
+        "index_id": "DPMI-PRIVACY-ZK",
+        "value": 72.927959,
+        "source_timestamp": "2026-11-26T08:42:20Z",
+        "live_history_start": "2026-08-21T19:10:19Z"
+      },
+      "smart_contract_platforms": {
+        "index_id": "DPMI-SCP",
+        "value": 81.469089,
+        "source_timestamp": "2026-11-26T08:42:20Z",
+        "live_history_start": "2026-08-29T19:37:04Z"
+      }
+    }
+  }
+}
